@@ -1,4 +1,4 @@
-
+import os
 import json
 import requests
 from datetime import datetime
@@ -67,6 +67,30 @@ def get_count():
     """
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
+
+def get_access_token():
+    """
+    获取微信接口的访问凭证（access_token）
+    :return: 访问凭证（access_token）
+    """
+    # 从环境变量中获取appid和appsecret
+    appid = os.environ.get('APPID')
+    appsecret = os.environ.get('APPSECRET')
+
+    # 调用微信接口获取access_token
+    url = f'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={appid}&secret={appsecret}'
+    response = requests.get(url)
+    data = response.json()
+    print(data,'获取access_token')
+
+    # 从返回结果中提取access_token
+    access_token = data.get('access_token')
+
+    # 检查是否成功获取access_token
+    if not access_token:
+        return make_err_response('获取access_token失败')
+
+    return access_token
 
 @app.route('/api/add_material', methods=['POST'])
 def add_material():
