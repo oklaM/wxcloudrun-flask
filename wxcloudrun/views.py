@@ -64,3 +64,26 @@ def get_count():
     """
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
+
+@app.route('/api/access_token', methods=['GET'])
+def get_access_token():
+    """
+    :return: 访问凭证
+    """
+    # 从环境变量中获取appid和appsecret
+    appid = os.environ.get('APPID')
+    appsecret = os.environ.get('APPSECRET')
+
+    # 调用微信接口获取access_token
+    url = f'https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid={appid}&secret={appsecret}'
+    response = requests.get(url)
+    data = response.json()
+
+    # 从返回结果中提取access_token
+    access_token = data.get('access_token')
+
+    # 检查是否成功获取access_token
+    if not access_token:
+        return make_err_response('获取access_token失败')
+
+    return make_succ_response(access_token)
