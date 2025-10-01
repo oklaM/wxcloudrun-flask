@@ -71,6 +71,8 @@ def get_access_token():
     :return: 访问凭证
     """
     # 从环境变量中获取appid和appsecret
+    import os
+    import requests
     appid = os.environ.get('APPID')
     appsecret = os.environ.get('APPSECRET')
 
